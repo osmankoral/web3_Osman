@@ -15,6 +15,14 @@ namespace Client.GamePlay
             GameManager.ExpGain.AddListener(() => ExprienceGain());
         }
 
+        private void Start()
+        {
+            if(!PlayerPrefs.HasKey("PlayerGold"))
+            {
+                PlayerPrefs.SetInt("PlayerGold", 10);
+            }
+        }
+
         private void OnDisable()
         {
             GameManager.ExpGain.RemoveAllListeners();
@@ -23,6 +31,17 @@ namespace Client.GamePlay
         public void ExprienceGain()
         {
             _server.PlayerGainExperience(1);
+        }
+
+        public void GoldGain(int gold)
+        {
+            PlayerPrefs.SetInt("PlayerGold", PlayerPrefs.GetInt("PlayerGold") + gold);
+        }
+
+        public void GoldDecrease(int gold)
+        {
+            PlayerPrefs.SetInt("PlayerGold", PlayerPrefs.GetInt("PlayerGold") - gold);
+
         }
 
     }

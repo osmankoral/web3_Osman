@@ -11,6 +11,8 @@ namespace Client.GamePlay
     public class GameManager : Singleton<GameManager>
     {
         public bool IsGameReady;
+
+        public string den = "dada";
         [HideInInspector] public static UnityEvent ExpGain = new();
 
         [SerializeField] private int _heroCount;

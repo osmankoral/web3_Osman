@@ -10,7 +10,7 @@ namespace Client.Client.UI.ChallengeUI
     {
         [SerializeField] private GameObject _losePanale;
         [SerializeField] private GameObject _winPanale;
-        [SerializeField] private Button _attackButton;
+        [SerializeField] private Button[] _attackButton;
         [SerializeField] private Image _heroMark;
 
         [SerializeField] private CombatManagerClient _combatManager;
@@ -19,33 +19,51 @@ namespace Client.Client.UI.ChallengeUI
         {
             _combatManager.buttonActive += AttackButtonSet;
             _combatManager.battleEnd += PanelChange;
+            _combatManager.skillSet += SkillSet;
         }
 
         private void OnDisable()
         {
             _combatManager.buttonActive -= AttackButtonSet;
             _combatManager.battleEnd -= PanelChange;
+            _combatManager.skillSet -= SkillSet;
             
         }
 
-        private void AttackButtonSet(bool isActive, Vector3 position)
+        private void AttackButtonSet(bool isActive,int whichButton)
         {
-            _attackButton.gameObject.SetActive(isActive);
+            foreach(var button in _attackButton)
+            {
+                button.gameObject.SetActive(false);
+            }
+            _attackButton[whichButton].gameObject.SetActive(isActive);
             _heroMark.gameObject.SetActive(isActive);
-
-            _heroMark.transform.position = position;
+        }
+        private void SkillSet(int skillCount, Sprite[] a)
+        {
+            for(int i=0; i<skillCount; i++)
+            {
+                _attackButton[i].gameObject.SetActive(true);
+                _attackButton[i].GetComponent<Image>().sprite = a[i];
+            }
         }
 
-        public void Attack()
+        public void Attack(int wichSkill)
         {
-            CombatManagerClient.Player_Action.Invoke();
+            _combatManager.player_Action(wichSkill);
         }
 
-        public void MenuSceneButton()
+        public void VictoryButton()
         {
-            PlayerLevelClient.Instance.ExprienceGain();
+            GameManager.ExpGain.Invoke();
+            PlayerLevelClient.Instance.GoldGain(GameManager.Instance.GetEnemyCount());
             GameManager.Instance.SceneChange("MenuScene");
             
+        }
+
+        public void LoseButton()
+        {
+            GameManager.Instance.SceneChange("MenuScene");
         }
 
         private void PanelChange(bool isACtive)
